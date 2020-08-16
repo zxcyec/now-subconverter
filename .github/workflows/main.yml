@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'commit message'
+        required: true
+        default: 'Update subconverter'
+   
+jobs:
+  Build:
+    name: Build and Update
+    runs-on: ubuntu-latest 
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Prepare
+      run: |
+        rm -rf subconverter
+        git clone https://github.com/tindy2013/subconverter.git
+    - name: Build
+      run: docker run -v $GITHUB_WORKSPACE/subconverter:/root/workdir multiarch/alpine:amd64-latest-stable /bin/sh -c "apk add bash git && cd /root/workdir && chmod +x scripts/build.alpine.release.sh && bash scripts/build.alpine.release.sh"
+    - name: Clean up
+      run: |
+        mkdir temp
+        mv -f subconverter/subconverter/* temp/
+        sudo chattr -R -i subconverter
+        sudo rm -rf subconverter
+        mv -f temp subconverter
+        mv -f subconverter/subconverter subconverter/subconverter.exe
+        cp -R files/* subconverter/
+    - uses: autosuite/autocommit@master
+      with:
+        commit-message: ${{ github.event.inputs.message }}
+        add-options: -A
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.REPO_TOKEN }}
+        branch: master
