@@ -1,4 +1,4 @@
-name: CI
+name: Update subconverter
 
 on:
   workflow_dispatch:
@@ -29,7 +29,8 @@ jobs:
         sudo rm -rf subconverter
         mv -f temp subconverter
         mv -f subconverter/subconverter subconverter/subconverter.exe
-        cp -R files/* subconverter/
+        sudo chmod +x subconverter/subconverter.exe
+        sed -i 's/api_mode=false/api_mode=true/g' subconverter/pref.ini
     - uses: autosuite/autocommit@master
       with:
         commit-message: ${{ github.event.inputs.message }}
