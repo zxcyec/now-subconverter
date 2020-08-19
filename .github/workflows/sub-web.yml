@@ -35,9 +35,9 @@ jobs:
         
     - name: Clean up
       run: |
-        cd ..
-        mv sub-web/dist temp
-        sudo chattr -R -i sub-web
+        cd $GITHUB_WORKSPACE
+        mkdir temp
+        sudo cp -rf sub-web/dist/* temp/
         sudo rm -rf sub-web
         mv temp sub-web
         
