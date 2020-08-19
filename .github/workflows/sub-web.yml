@@ -10,17 +10,37 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    strategy:
+      matrix:
+        node-version: [10.x]
+
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2.3.2
 
-    # Runs a set of commands using the runners shell
     - name: Update sub-web
       run: |
         rm -rf sub-web
         git clone https://github.com/zhongfly/sub-web.git
-        sudo rm -rf sub-web/.git
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Get dependencies and build
+      run: |
+        cd sub-web
+        yarn install
+        yarn build
+        
+    - name: Clean up
+      run: |
+        cd ..
+        mv sub-web/dist temp
+        sudo chattr -R -i sub-web
+        sudo rm -rf sub-web
+        mv temp sub-web
+        
     - name: Check subconverter
       run: |
         sudo chmod +x subconverter/subconverter.exe
