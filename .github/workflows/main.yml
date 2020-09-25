@@ -36,12 +36,12 @@ jobs:
         sed -i 's/managed_config_prefix=http:\/\/127.0.0.1:25500/managed_config_prefix=https:\/\/sub-beta.now.sh/g' subconverter/pref.ini
         sed -i 's/async_fetch_ruleset=false/async_fetch_ruleset=true/g' subconverter/pref.ini
         sed -i 's/max_concurrent_threads=./max_concurrent_threads=1/g' subconverter/pref.ini
-    - uses: autosuite/autocommit@master
+    - name: Add & Commit
+      uses: EndBug/add-and-commit@v4.4.0
       with:
-        commit-message: ${{ github.event.inputs.message }}
-        add-options: -A
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.REPO_TOKEN }}
-        branch: master
+        author_name: GitHub Action
+        author_email: noreply@github.com
+        message: ${{ github.event.inputs.message }}
+        add: "-A"
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }} 
