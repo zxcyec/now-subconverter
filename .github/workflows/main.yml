@@ -45,4 +45,4 @@ jobs:
         message: ${{ github.event.inputs.message }}
         add: "-A"
       env:
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }} 
+        token: ${{ secrets.GITHUB_TOKEN }}

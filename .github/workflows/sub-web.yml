@@ -49,4 +49,4 @@ jobs:
         message: "Update sub-web from zhongfly/sub-web"
         add: "-A"
       env:
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }} 
+        token: ${{ secrets.GITHUB_TOKEN }}
